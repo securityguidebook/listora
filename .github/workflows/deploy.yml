@@ -6,9 +6,8 @@ on:
   pull_request:
     branches: [master]
 
-# Deployment is handled automatically by Cloudflare Pages'
-# native Git integration — connect the repo in the CF dashboard.
-# This workflow just verifies the build passes on every push/PR.
+# Deployment is handled automatically by Cloudflare Pages' native Git integration.
+# This workflow verifies the build passes on every push/PR.
 
 jobs:
   build:
@@ -23,13 +22,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Type check
         run: npx tsc --noEmit
 
-      - name: Build
-        run: npm run build
+      - name: Build (Cloudflare Pages adapter)
+        run: npm run build:cf
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

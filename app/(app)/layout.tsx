@@ -5,12 +5,7 @@ import { SignOutButton } from '@/components/sign-out-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-interface AppLayoutProps {
-  children: React.ReactNode
-  title?: string
-}
-
-export default async function AppLayout({ children }: AppLayoutProps) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
