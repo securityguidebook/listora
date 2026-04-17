@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { PageHeader } from '@/components/page-header'
 import { Wishlist } from '@/components/wishlist/wishlist'
 

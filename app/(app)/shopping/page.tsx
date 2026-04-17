@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { PageHeader } from '@/components/page-header'
 import { ShoppingList } from '@/components/shopping/shopping-list'
 

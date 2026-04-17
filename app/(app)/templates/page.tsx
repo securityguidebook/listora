@@ -1,3 +1,5 @@
+export const runtime = 'edge'
+
 import { PageHeader } from '@/components/page-header'
 import { TemplatesView } from '@/components/templates/templates-view'
 
