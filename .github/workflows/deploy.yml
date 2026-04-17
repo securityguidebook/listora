@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: CI
 
 on:
   push:
@@ -6,10 +6,14 @@ on:
   pull_request:
     branches: [master]
 
+# Deployment is handled automatically by Cloudflare Pages'
+# native Git integration — connect the repo in the CF dashboard.
+# This workflow just verifies the build passes on every push/PR.
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Type-check & build
     steps:
       - uses: actions/checkout@v4
 
@@ -19,18 +23,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
-      - name: Build for Cloudflare Pages
-        run: npx @cloudflare/next-on-pages
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Deploy to Cloudflare Pages
-        if: github.ref == 'refs/heads/main'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .vercel/output/static --project-name=listora
