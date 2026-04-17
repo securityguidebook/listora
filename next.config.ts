@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  // Required for @cloudflare/next-on-pages
+  // Remove if deploying to Vercel
+  // experimental: { runtime: 'edge' },
+}
 
-export default nextConfig;
+export default nextConfig
