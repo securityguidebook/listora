@@ -1,4 +1,4 @@
-name: CI
+name: CI / Deploy
 
 on:
   push:
@@ -6,13 +6,10 @@ on:
   pull_request:
     branches: [master]
 
-# Deployment is handled automatically by Cloudflare Pages' native Git integration.
-# This workflow verifies the build passes on every push/PR.
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Type-check & build
+    name: Build & deploy to Cloudflare Pages
     steps:
       - uses: actions/checkout@v4
 
@@ -32,3 +29,10 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/master'
+        run: npx wrangler pages deploy .vercel/output/static --project-name carter
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
