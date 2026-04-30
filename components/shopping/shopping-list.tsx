@@ -6,6 +6,7 @@ import { parseShoppingText } from '@/lib/parse-shopping-text'
 import { ShoppingItem, CATEGORIES } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ArrowUp, Check, Mic, MicOff, Trash2 } from 'lucide-react'
+import { TemplatePicker } from '@/components/shopping/template-picker'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const CACHE_KEY = 'shopping_items'
@@ -322,6 +323,9 @@ function QuickAddBar({ onAdded }: { onAdded: (items: ShoppingItem[]) => void }) 
       {!isExpanded ? (
         <div className="flex items-center gap-3 px-4 py-3 cursor-text" onClick={expand}>
           <p className="flex-1 text-sm text-gray-400">Add items...</p>
+          <span onClick={(e) => e.stopPropagation()}>
+            <TemplatePicker onAdded={onAdded} />
+          </span>
           {hasSpeech && (
             <button
               onClick={(e) => { e.stopPropagation(); handleVoice() }}
