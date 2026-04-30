@@ -3,7 +3,7 @@ export const runtime = 'edge'
 import { PageHeader } from '@/components/page-header'
 import { ShoppingList } from '@/components/shopping/shopping-list'
 
-export const metadata = { title: 'Shopping List — Listora' }
+export const metadata = { title: 'Shopping List — Carter' }
 
 export default function ShoppingPage() {
   return (

@@ -3,7 +3,7 @@ export const runtime = 'edge'
 import { PageHeader } from '@/components/page-header'
 import { Wishlist } from '@/components/wishlist/wishlist'
 
-export const metadata = { title: 'Wishlist — Listora' }
+export const metadata = { title: 'Wishlist — Carter' }
 
 export default function WishlistPage() {
   return (

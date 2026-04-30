@@ -1,9 +1,10 @@
-const CACHE_NAME = 'listora-v1'
+const CACHE_NAME = 'carter-v1'
 const STATIC_ASSETS = [
   '/shopping',
   '/wishlist',
   '/templates',
   '/analytics',
+  '/receipts',
   '/manifest.json',
 ]
 
@@ -30,12 +31,18 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET and cross-origin requests
   if (request.method !== 'GET' || url.origin !== self.location.origin) return
 
-  // For navigation requests: network-first, fall back to cached shell
+  // For navigation requests: stale-while-revalidate — serve cache instantly,
+  // then refresh in the background so the next visit is up to date.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() =>
-        caches.match('/shopping').then((r) => r ?? Response.error())
-      )
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const cached = await cache.match(request)
+        const networkFetch = fetch(request).then((res) => {
+          if (res.ok) cache.put(request, res.clone())
+          return res
+        }).catch(() => cached ?? Response.error())
+        return cached ?? networkFetch
+      })
     )
     return
   }

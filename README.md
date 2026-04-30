@@ -1,18 +1,19 @@
-# Listora
+# Carter
 
 Smart shopping & wishlist PWA — usable on day 1 from web or iPhone home screen.
 
 ## Features
 
-- **Shopping List** — add items with category, quantity, notes. Check off items to record purchase history
-- **Wishlist** — track things you want with priority, price, and URL
+- **Shopping List** — add items with category, quantity, notes, section, and price. Voice input supported (Web Speech API). Check off items to record purchase history
+- **Wishlist** — track things you want with priority, price, and URL. Mark as purchased to record to price history
 - **Templates** — colour-coded post-it cards of reusable lists (recipes, hiking, weekly shop). One tap to add all items to your shopping list
+- **Receipts** — price history and price-spy view. Browse every item you've bought, see best price, average price, and full purchase timeline. Toggle between "By Item" and "By Store" views
 - **Analytics** — purchase frequency, item trends, category breakdown, monthly spend
-- **PWA** — installable on iPhone via Safari → Share → Add to Home Screen. Works offline
+- **PWA** — installable on iPhone via Safari → Share → Add to Home Screen. Works fully offline after first load — data is cached locally and writes are queued and replayed when connectivity returns
 
 ## Stack
 
-- **Frontend**: Next.js 16 App Router + TypeScript + Tailwind CSS
+- **Frontend**: Next.js 15 App Router + TypeScript + Tailwind CSS
 - **Backend**: Supabase (PostgreSQL + Auth + RLS)
 - **Hosting**: Cloudflare Pages
 
@@ -69,7 +70,7 @@ node scripts/generate-icons.mjs
 
 ```
 app/
-  (app)/          # Authenticated app pages (shopping, wishlist, templates, analytics)
+  (app)/          # Authenticated app pages (shopping, wishlist, templates, analytics, receipts)
   login/          # Auth pages
   register/
 components/
@@ -77,9 +78,11 @@ components/
   wishlist/       # Wishlist components
   templates/      # Template card + dialog
   analytics/      # Charts and stats
+  receipts/       # Price history / receipts view
   ui/             # Button, Input, Dialog, Select primitives
 lib/
   supabase/       # Browser + server Supabase clients
+  data-cache.ts   # Two-layer local cache (in-memory + localStorage) + offline write queue
   types.ts        # Shared TypeScript types
 supabase/
   migrations/     # SQL schema + RLS policies

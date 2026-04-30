@@ -1,5 +1,5 @@
 -- ============================================================
--- Listora — Initial Schema
+-- Carter — Initial Schema
 -- Run this in your Supabase SQL editor
 -- ============================================================
 

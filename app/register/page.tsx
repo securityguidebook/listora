@@ -46,7 +46,7 @@ export default function RegisterPage() {
         <div className="mb-8 text-center">
           <div className="text-5xl mb-3">🛒</div>
           <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
-          <p className="mt-1 text-sm text-gray-500">Get started with Listora for free</p>
+          <p className="mt-1 text-sm text-gray-500">Get started with Carter for free</p>
         </div>
 
         <form onSubmit={handleRegister} className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">

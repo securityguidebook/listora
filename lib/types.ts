@@ -7,7 +7,9 @@ export interface ShoppingItem {
   name: string
   quantity: string | null
   category: string
+  price: number | null
   notes: string | null
+  section: string | null
   checked: boolean
   created_at: string
   updated_at: string
@@ -53,8 +55,19 @@ export interface PurchaseHistory {
   category: string
   quantity: string | null
   price: number | null
+  section: string | null
   source: ItemSource
   purchased_at: string
+}
+
+export interface ReceiptGroup {
+  item_name: string
+  category: string
+  count: number
+  best_price: number | null
+  avg_price: number | null
+  last_bought: string
+  entries: PurchaseHistory[]
 }
 
 export interface AnalyticsSummary {

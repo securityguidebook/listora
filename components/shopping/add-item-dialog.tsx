@@ -18,6 +18,7 @@ export function AddItemDialog({ onAdded }: AddItemDialogProps) {
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState('')
   const [category, setCategory] = useState('Other')
+  const [price, setPrice] = useState('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -28,20 +29,22 @@ export function AddItemDialog({ onAdded }: AddItemDialogProps) {
     if (!name.trim()) return
     setLoading(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
 
     await supabase.from('shopping_items').insert({
-      user_id: user.id,
+      user_id: session.user.id,
       name: name.trim(),
       quantity: quantity.trim() || null,
       category,
+      price: price ? parseFloat(price) : null,
       notes: notes.trim() || null,
     })
 
     setName('')
     setQuantity('')
     setCategory('Other')
+    setPrice('')
     setNotes('')
     setLoading(false)
     setOpen(false)
@@ -72,13 +75,22 @@ export function AddItemDialog({ onAdded }: AddItemDialogProps) {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
             />
-            <Select
-              label="Category"
-              value={category}
-              onValueChange={setCategory}
-              options={CATEGORIES.map((c) => ({ label: c, value: c }))}
+            <Input
+              label="Price (optional)"
+              placeholder="0.00"
+              type="number"
+              step="0.01"
+              min="0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
             />
           </div>
+          <Select
+            label="Category"
+            value={category}
+            onValueChange={setCategory}
+            options={CATEGORIES.map((c) => ({ label: c, value: c }))}
+          />
           <Input
             label="Notes (optional)"
             placeholder="Brand preference, store, etc."

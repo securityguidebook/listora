@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { BarChart2, Heart, Layout, ShoppingCart } from 'lucide-react'
+import { BarChart2, Heart, Layout, Receipt, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: '/wishlist', label: 'Wishlist', icon: Heart },
   { href: '/templates', label: 'Templates', icon: Layout },
   { href: '/analytics', label: 'Analytics', icon: BarChart2 },
+  { href: '/receipts', label: 'Receipts', icon: Receipt },
 ]
 
 export function BottomNav() {

@@ -3,7 +3,7 @@ export const runtime = 'edge'
 import { PageHeader } from '@/components/page-header'
 import { AnalyticsView } from '@/components/analytics/analytics-view'
 
-export const metadata = { title: 'Analytics — Listora' }
+export const metadata = { title: 'Analytics — Carter' }
 
 export default function AnalyticsPage() {
   return (

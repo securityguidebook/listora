@@ -6,13 +6,13 @@ import './globals.css'
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 
 export const metadata: Metadata = {
-  title: 'Listora',
+  title: 'Carter',
   description: 'Your smart shopping & wishlist companion',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Listora',
+    title: 'Carter',
   },
 }
 

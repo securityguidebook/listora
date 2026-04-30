@@ -1,11 +1,14 @@
 'use client'
 
 import { AddWishlistDialog } from '@/components/wishlist/add-wishlist-dialog'
+import { readCache, writeCache, patchCache, removeFromCache, enqueueWrite } from '@/lib/data-cache'
 import { createClient } from '@/lib/supabase/client'
 import { WishlistItem } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { ExternalLink, ShoppingBag, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+
+const CACHE_KEY = 'wishlist_items'
 
 const PRIORITY_STYLES: Record<string, string> = {
   high: 'bg-red-100 text-red-700',
@@ -18,6 +21,11 @@ export function Wishlist() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
+  useEffect(() => {
+    const cached = readCache<WishlistItem>(CACHE_KEY)
+    if (cached) { setItems(cached); setLoading(false) }
+  }, [])
+
   const fetchItems = useCallback(async () => {
     const { data } = await supabase
       .from('wishlist_items')
@@ -25,41 +33,49 @@ export function Wishlist() {
       .order('purchased', { ascending: true })
       .order('priority', { ascending: false })
       .order('created_at', { ascending: false })
-    setItems(data ?? [])
+    if (data) { setItems(data); writeCache(CACHE_KEY, data) }
     setLoading(false)
   }, [supabase])
 
+  useEffect(() => { fetchItems() }, [fetchItems])
+
   useEffect(() => {
-    fetchItems()
+    window.addEventListener('carter:synced', fetchItems)
+    return () => window.removeEventListener('carter:synced', fetchItems)
   }, [fetchItems])
 
   async function markPurchased(item: WishlistItem) {
     const newPurchased = !item.purchased
-    setItems((prev) =>
-      prev.map((i) => (i.id === item.id ? { ...i, purchased: newPurchased } : i))
-    )
-    await supabase
-      .from('wishlist_items')
-      .update({ purchased: newPurchased })
-      .eq('id', item.id)
-
-    if (newPurchased) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, purchased: newPurchased } : i)))
+    patchCache<WishlistItem>(CACHE_KEY, item.id, { purchased: newPurchased })
+    const { data: { session } } = await supabase.auth.getSession()
+    try {
+      await supabase.from('wishlist_items').update({ purchased: newPurchased }).eq('id', item.id)
+      if (newPurchased && session) {
         await supabase.from('purchase_history').insert({
-          user_id: user.id,
+          user_id: session.user.id,
           item_name: item.name,
           category: 'Wishlist',
           price: item.price,
           source: 'wishlist',
         })
       }
+    } catch {
+      enqueueWrite({ table: 'wishlist_items', op: 'update', payload: { purchased: newPurchased }, eqFilter: { column: 'id', value: item.id } })
+      if (newPurchased && session) {
+        enqueueWrite({ table: 'purchase_history', op: 'insert', payload: { user_id: session.user.id, item_name: item.name, category: 'Wishlist', price: item.price, source: 'wishlist' } })
+      }
     }
   }
 
   async function deleteItem(id: string) {
     setItems((prev) => prev.filter((i) => i.id !== id))
-    await supabase.from('wishlist_items').delete().eq('id', id)
+    removeFromCache(CACHE_KEY, id)
+    try {
+      await supabase.from('wishlist_items').delete().eq('id', id)
+    } catch {
+      enqueueWrite({ table: 'wishlist_items', op: 'delete', eqFilter: { column: 'id', value: id } })
+    }
   }
 
   const active = items.filter((i) => !i.purchased)

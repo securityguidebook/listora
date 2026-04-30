@@ -2,7 +2,6 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
 import { BottomNav } from '@/components/bottom-nav'
-import { SignOutButton } from '@/components/sign-out-button'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 

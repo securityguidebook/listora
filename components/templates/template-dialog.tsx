@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '@/components/
 import { Input } from '@/components/ui/input'
 import { createClient } from '@/lib/supabase/client'
 import { Template, TemplateItem, TEMPLATE_COLORS, TEMPLATE_EMOJIS } from '@/lib/types'
-import { Plus, Trash2, X } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface Props {
@@ -62,8 +62,8 @@ export function TemplateDialog({ template, trigger, onSaved, open: controlledOpe
     if (!name.trim()) return
     setLoading(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
 
     if (template) {
       // Update
@@ -73,7 +73,7 @@ export function TemplateDialog({ template, trigger, onSaved, open: controlledOpe
       // Insert new
       const { data: newTemplate } = await supabase
         .from('templates')
-        .insert({ user_id: user.id, name, description: description || null, color, emoji })
+        .insert({ user_id: session.user.id, name, description: description || null, color, emoji })
         .select()
         .single()
 

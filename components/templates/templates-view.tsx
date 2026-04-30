@@ -3,11 +3,14 @@
 import { TemplateCard } from '@/components/templates/template-card'
 import { TemplateDialog } from '@/components/templates/template-dialog'
 import { Button } from '@/components/ui/button'
+import { readCache, writeCache } from '@/lib/data-cache'
 import { createClient } from '@/lib/supabase/client'
 import { Template } from '@/lib/types'
 import { Plus } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+
+const CACHE_KEY = 'templates'
 
 export function TemplatesView() {
   const [templates, setTemplates] = useState<Template[]>([])
@@ -17,18 +20,21 @@ export function TemplatesView() {
   const router = useRouter()
   const supabase = createClient()
 
+  useEffect(() => {
+    const cached = readCache<Template>(CACHE_KEY)
+    if (cached) { setTemplates(cached); setLoading(false) }
+  }, [])
+
   const fetchTemplates = useCallback(async () => {
     const { data } = await supabase
       .from('templates')
       .select('*, template_items(*)')
       .order('created_at', { ascending: false })
-    setTemplates(data ?? [])
+    if (data) { setTemplates(data); writeCache(CACHE_KEY, data) }
     setLoading(false)
   }, [supabase])
 
-  useEffect(() => {
-    fetchTemplates()
-  }, [fetchTemplates])
+  useEffect(() => { fetchTemplates() }, [fetchTemplates])
 
   function handleCopied() {
     router.push('/shopping')

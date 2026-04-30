@@ -19,8 +19,8 @@ export function TemplateCard({ template, onDeleted, onCopied, onEdit }: Props) {
 
   async function copyToShoppingList() {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
 
     const items = template.template_items ?? []
     if (items.length === 0) {
@@ -30,7 +30,7 @@ export function TemplateCard({ template, onDeleted, onCopied, onEdit }: Props) {
 
     await supabase.from('shopping_items').insert(
       items.map((item) => ({
-        user_id: user.id,
+        user_id: session.user.id,
         name: item.name,
         quantity: item.quantity,
         category: 'Other',

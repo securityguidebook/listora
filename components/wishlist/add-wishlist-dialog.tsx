@@ -33,11 +33,11 @@ export function AddWishlistDialog({ onAdded }: Props) {
     if (!name.trim()) return
     setLoading(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
 
     await supabase.from('wishlist_items').insert({
-      user_id: user.id,
+      user_id: session.user.id,
       name: name.trim(),
       priority,
       url: url.trim() || null,

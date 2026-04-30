@@ -36,7 +36,7 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <div className="text-5xl mb-3">🛒</div>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-1 text-sm text-gray-500">Sign in to your Listora account</p>
+          <p className="mt-1 text-sm text-gray-500">Sign in to your Carter account</p>
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
